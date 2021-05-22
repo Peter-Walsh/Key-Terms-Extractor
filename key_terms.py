@@ -2,21 +2,17 @@ from lxml import etree
 from utilities import *
 
 
-
 class NewsStory:
+
+    stories = []
 
     def __init__(self, heading, story):
         self.heading = heading
         self.story = story.lower()
-        self.tokens = remove_stop_and_punt(lemma_tokens(nltk.word_tokenize(self.story)))
+        self.tokens = get_nouns(remove_stop_and_punt(lemma_tokens(nltk.word_tokenize(self.story))))
+        NewsStory.stories.append(" ".join(self.tokens))
 
-        self.keys = get_keys_inorder(get_set_token_counts(get_nouns(self.tokens), get_token_counts(self.tokens)))
-
-    def __str__(self):
-        res = self.heading + ":\n"
-        for key in self.keys:
-            res += key + " "
-        return res
+        self.keys = {}
 
 
 if __name__ == "__main__":
@@ -28,6 +24,15 @@ if __name__ == "__main__":
     stories = []
     for news in xml_tree[0]:
         stories.append(NewsStory(news[0].text, news[1].text))
+
+    vectorization = get_tfidf_matrix()
+    matrix = vectorization.fit_transform(NewsStory.stories).toarray()
+    terms = vectorization.get_feature_names()
+
+    for i in range(0, len(NewsStory.stories)):
+        stories[i].keys = get_keys_inorder(dict(zip(terms, matrix[i])))
+
+    # stories[0].keys = get_keys_inorder(dict(zip(terms, matrix[0])))
 
     for story in stories:
         print(story.heading + ":")

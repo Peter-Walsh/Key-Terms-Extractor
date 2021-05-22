@@ -1,9 +1,15 @@
 import nltk
 from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import TfidfVectorizer
+
 from collections import defaultdict
 from string import punctuation
 
 punc = list(punctuation)
+
+
+def get_tfidf_matrix():
+    return TfidfVectorizer()
 
 
 def get_nouns(story_tokens):
