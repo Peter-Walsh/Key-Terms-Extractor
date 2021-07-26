@@ -9,61 +9,97 @@ punc = list(punctuation)
 
 
 def get_tfidf_matrix():
+    """"""
     return TfidfVectorizer()
 
 
+def get_tokens(text):
+    """
+    Takes the given text and returns a list of tokens
+
+    :param text: the text to get the tokens from
+    :return a list of tokens
+    """
+    return nltk.word_tokenize(text)
+
+
 def get_nouns(story_tokens):
-    result = []
-    for word in story_tokens:
-        if nltk.pos_tag([word])[0][1] == 'NN':
-            result.append(word)
-    return result
+    """
+    Takes a list of tokens from a piece of text and returns a list of all
+    the nouns in that list
+
+    ### NOTE ###
+
+    Before extracting the nouns:
+
+    1.) Lemmatize
+    2.) remove stop-words and punctuation
+
+    ### END NOTE ###
+
+    :param story_tokens: the tokens
+    :return: a list of nouns in story_tokens
+    """
+
+    return [word for word in story_tokens if nltk.pos_tag([word])[0][1] == 'NN']
 
 
 def lemma_tokens(story_tokens):
-    result = []
-    lemma = nltk.WordNetLemmatizer()
+    """
+    Lemmatizes a list of story tokens, and returns the new list
 
-    for idx in range(0, len(story_tokens) - 1):
-        result.append(lemma.lemmatize(story_tokens[idx]))
-    return result
+    :param story_tokens: the story tokens we want to lemmatize
+    :return: returns the new list of lemmatized tokens
+    """
+    lemma = nltk.WordNetLemmatizer()
+    return [lemma.lemmatize(word) for word in story_tokens]
 
 
 def remove_stop_and_punt(story_tokens):
-    result = []
-    for token in story_tokens:
-        if token not in stopwords.words('english') and token not in punc:
-            result.append(token)
-    return result
+    """
+    Removes all english stop-words and punctuation from the given list of tokens
 
+    :param story_tokens: the list of tokens
+    :return: the list of tokens with stop-words and punctuation removed
+    """
 
-def remove_stopwords(story_tokens):
-    result = []
-    for token in story_tokens:
-        if token not in stopwords.words('english'):
-            result.append(token)
-
-
-def remove_punctuation(story_tokens):
-    result = []
-    for token in story_tokens:
-        if token not in punc:
-            result.append(token)
+    return [token for token in story_tokens if token not in stopwords.words('english') and token not in punc]
 
 
 def get_keys_inorder(count_dict):
-    return sorted(sorted(count_dict, reverse=True), key=lambda key: count_dict.get(key), reverse=True)
+    """
+    Takes a dictionary where keys are tokens and values are the counts of those tokens and sorts
+    the keys as follows:
+
+     1.) First, alphabetically using the keys in the dictionary (ascending order)
+     2.) Second, by the values in the dictionary  (descending order)
+
+    :param count_dict: the dictionary of tokens and their respective counts
+        :types {str : int}
+        :keys the token as a string
+        :values the counts for each token
+
+    :return: a list of the keys sorted according to the criteria above
+    """
+
+    # First sort
+    first_sort = sorted(count_dict, reverse=True)
+
+    # Second sort
+    second_sort = sorted(first_sort, key=lambda key: count_dict.get(key), reverse=True)
+
+    return second_sort
 
 
 def get_token_counts(story_tokens):
+    """
+    Returns a dictionary with the counts of each token in the given list of tokens
+
+    :param story_tokens: the given list of tokens
+    :return: the dictionary with the counts for each token in the given list of tokens
+    """
     count_dict = defaultdict(int)
+
     for token in story_tokens:
         count_dict[token] += 1
-    return count_dict
-
-
-def get_set_token_counts(tokens, token_counts):
-    count_dict = defaultdict(int)
-    for token in tokens:
-        count_dict[token] = token_counts[token]
     return count_dict
