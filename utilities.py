@@ -1,5 +1,8 @@
-import nltk
 from nltk.corpus import stopwords
+from nltk import WordNetLemmatizer
+from nltk import word_tokenize
+from nltk import pos_tag
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 from collections import defaultdict
@@ -9,7 +12,9 @@ punc = list(punctuation)
 
 
 def get_tfidf_matrix():
-    """"""
+    """
+    :return: TfidfVectorizer object for putting together Tfidf matrix
+    """
     return TfidfVectorizer()
 
 
@@ -20,7 +25,7 @@ def get_tokens(text):
     :param text: the text to get the tokens from
     :return a list of tokens
     """
-    return nltk.word_tokenize(text)
+    return word_tokenize(text)
 
 
 def get_nouns(story_tokens):
@@ -41,7 +46,7 @@ def get_nouns(story_tokens):
     :return: a list of nouns in story_tokens
     """
 
-    return [word for word in story_tokens if nltk.pos_tag([word])[0][1] == 'NN']
+    return [word for word in story_tokens if pos_tag([word])[0][1] == 'NN']
 
 
 def lemma_tokens(story_tokens):
@@ -51,7 +56,7 @@ def lemma_tokens(story_tokens):
     :param story_tokens: the story tokens we want to lemmatize
     :return: returns the new list of lemmatized tokens
     """
-    lemma = nltk.WordNetLemmatizer()
+    lemma = WordNetLemmatizer()
     return [lemma.lemmatize(word) for word in story_tokens]
 
 
