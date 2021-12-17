@@ -1,5 +1,5 @@
-from utilities import *
-from news import NewsStory
+from old.utilities import *
+from old.news import NewsStory
 
 
 def version5(filename):

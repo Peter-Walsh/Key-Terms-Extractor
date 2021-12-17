@@ -1,5 +1,5 @@
-from versions import version5
-from utilities import *
+from old.versions import version5
+from old.utilities import *
 
 
 # class NewsStory:
